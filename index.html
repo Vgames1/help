@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VGAMES - Help & Feedback</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .logo {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+    .feedback-form {
+      display: flex;
+      flex-direction: column;
+    }
+    .feedback-form textarea {
+      height: 150px;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .feedback-form button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .feedback-form button:hover {
+      background-color: #0056b3;
+    }
+    .attribution {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    .attribution img {
+      vertical-align: middle;
+      margin: 0 5px;
+    }
+    .alert {
+      display: none;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .alert.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .gmail-redirect {
+      display: none;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .gmail-redirect:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="http://www.vgames.run.place/vgamesblack.png" alt="VGAMES Logo" class="logo">
+    <h1>Help & Feedback</h1>
+    <p>Have questions or feedback? Contact us at <a href="mailto:vilakazigames@gmail.com">vilakazigames@gmail.com</a> or write your feedback below.</p>
+
+    <!-- Custom Alerts -->
+    <div id="successAlert" class="alert success">Feedback sent successfully!</div>
+    <div id="errorAlert" class="alert error">Failed to send feedback. Please try again.</div>
+
+    <!-- Feedback Form -->
+    <form class="feedback-form" id="feedbackForm">
+      <textarea id="feedbackInput" placeholder="Write your feedback here..." required></textarea>
+      <button type="submit">Send Feedback</button>
+    </form>
+
+    <!-- Gmail Redirect Link -->
+    <a id="gmailRedirect" class="gmail-redirect" target="_blank">Click here to send feedback via Gmail</a>
+
+    <div class="attribution">
+      VGAMES games are embedded from 
+      <img src="https://www.onlinegames.io/media/website/online-games-io.png" alt="OnlineGames.io" width="20"> 
+      <a href="https://www.onlinegames.io" target="_blank">OnlineGames.io</a>.
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('feedbackForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const feedback = document.getElementById('feedbackInput').value;
+
+      // Hide alerts and Gmail redirect link
+      document.getElementById('successAlert').style.display = 'none';
+      document.getElementById('errorAlert').style.display = 'none';
+      document.getElementById('gmailRedirect').style.display = 'none';
+
+      fetch('/send-feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ feedback }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Show success alert
+            document.getElementById('successAlert').style.display = 'block';
+          } else {
+            // Show error alert and Gmail redirect link
+            document.getElementById('errorAlert').style.display = 'block';
+            const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vilakazigames@gmail.com&su=VGAMES%20Feedback&body=${encodeURIComponent(feedback)}`;
+            document.getElementById('gmailRedirect').href = gmailLink;
+            document.getElementById('gmailRedirect').style.display = 'block';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Show error alert and Gmail redirect link
+          document.getElementById('errorAlert').style.display = 'block';
+          const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vilakazigames@gmail.com&su=VGAMES%20Feedback&body=${encodeURIComponent(feedback)}`;
+          document.getElementById('gmailRedirect').href = gmailLink;
+          document.getElementById('gmailRedirect').style.display = 'block';
+        });
+    });
+  </script>
+</body>
+</html>
